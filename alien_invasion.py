@@ -77,14 +77,17 @@ class AlienInvasion:
                 self._ship_hit()
                 break
     def _ship_hit(self):
-        self.stats.ships_left -= 1
-        self.aliens.empty()
-        self.bullets.empty()
+        if self.stats.ships_left > 0:
+            self.stats.ships_left -= 1
+            self.aliens.empty()
+            self.bullets.empty()
 
-        self._create_fleet()
-        self.ship.center_ship()
+            self._create_fleet()
+            self.ship.center_ship()
 
-        sleep(0.5)
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
 
     def _check_fleet_edges(self):
         for alien in self.aliens.sprites():
