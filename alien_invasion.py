@@ -36,6 +36,9 @@ class AlienInvasion:
                 self.ship.update()
                 self._update_aliens()
                 self._update_bullets()
+            else:
+                sleep(3)
+                break
 
             self._update_screen()
 
