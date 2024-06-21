@@ -134,7 +134,9 @@ class AlienInvasion:
         """Перевірити події"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-
+                filename = 'scores.json'
+                with open(filename, 'w') as f:
+                    json.dump(self.stats.high_score, f)
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
@@ -175,6 +177,9 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
+            filename = 'scores.json'
+            with open(filename, 'w') as f:
+                json.dump(self.stats.high_score, f)
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
