@@ -125,6 +125,9 @@ class AlienInvasion:
             self._create_fleet()
             self.settings.increase_speed()
 
+            self.stats.level += 1
+            self.sb.prep_level()
+
     def _check_events(self):
         """Перевірити події"""
         for event in pygame.event.get():
@@ -150,6 +153,9 @@ class AlienInvasion:
 
             self._create_fleet()
             self.ship.center_ship()
+
+            self.sb.prep_score()
+            self.sb.prep_level()
 
             pygame.mouse.set_visible(False)
 
