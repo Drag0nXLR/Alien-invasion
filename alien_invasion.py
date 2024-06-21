@@ -8,6 +8,7 @@ from bullet import Bullet
 from game_stats import GameStats
 from settings import Settings
 from ship import Ship
+from button import Button
 
 
 class AlienInvasion:
@@ -28,6 +29,8 @@ class AlienInvasion:
 
         self._create_fleet()
 
+        self.play_button = Button(self, "Play")
+
     def run_game(self):
         """Розпочати головний цикл гри. """
         while True:
@@ -36,9 +39,6 @@ class AlienInvasion:
                 self.ship.update()
                 self._update_aliens()
                 self._update_bullets()
-            else:
-                sleep(3)
-                break
 
             self._update_screen()
 
@@ -99,6 +99,7 @@ class AlienInvasion:
             if alien.check_edges():
                 self._change_fleet_direction()
                 break
+
     def _change_fleet_direction(self):
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed
@@ -153,6 +154,8 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+        if not self.stats.game_active:
+            self.play_button.draw_button()
         pygame.display.flip()
 
 if __name__ == '__main__':
