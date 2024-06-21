@@ -1,14 +1,13 @@
 import sys
 from time import sleep
-
 import pygame
-
 from alien import Alien
 from bullet import Bullet
 from game_stats import GameStats
 from settings import Settings
 from ship import Ship
 from button import Button
+from scoreboard import Scoreboard
 
 
 class AlienInvasion:
@@ -22,6 +21,7 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
 
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -30,9 +30,6 @@ class AlienInvasion:
         self._create_fleet()
 
         self.play_button = Button(self, "Play")
-
-        self.speedup_scale = 1.1
-        self.settings.initialize_dynamic_settings()
 
     def run_game(self):
         """Розпочати головний цикл гри. """
@@ -83,6 +80,7 @@ class AlienInvasion:
             if alien.rect.bottom >= screen_rect.bottom:
                 self._ship_hit()
                 break
+
     def _ship_hit(self):
         if self.stats.ships_left > 0:
             self.stats.ships_left -= 1
@@ -117,6 +115,11 @@ class AlienInvasion:
 
     def _check_bullet_alien_collisions(self):
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
+            self.sb.check_high_score()
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
@@ -125,7 +128,9 @@ class AlienInvasion:
     def _check_events(self):
         """Перевірити події"""
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
@@ -163,6 +168,7 @@ class AlienInvasion:
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+
     def _fire_bullet(self):
         """Створити нову кулю та додати її до групи куль"""
         if len(self.bullets) < self.settings.bullets_allowed:
@@ -176,6 +182,9 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        self.sb.show_score()
+
         if not self.stats.game_active:
             self.play_button.draw_button()
         pygame.display.flip()
